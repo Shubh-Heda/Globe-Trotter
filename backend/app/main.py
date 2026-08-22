@@ -97,6 +97,7 @@ def create_app() -> FastAPI:
     from app.modules.dashboard.router import router as dashboard_router
     from app.modules.admin.router import router as admin_router
     from app.modules.sharing.router import router as sharing_router
+    from app.modules.chat.router import router as chat_router
     from app.realtime.manager import router as ws_router
 
     app.include_router(catalog_router)
@@ -108,6 +109,7 @@ def create_app() -> FastAPI:
     app.include_router(dashboard_router)
     app.include_router(admin_router)
     app.include_router(sharing_router)
+    app.include_router(chat_router)
     app.include_router(ws_router)
     app.include_router(auth_router, prefix="/api/v1")
     app.include_router(users_router, prefix="/api/v1")
