@@ -4,6 +4,12 @@
 backend/.env
 frontend/.env.local
 
+# Extra secret-file patterns, kept regardless of whether one exists yet
+*.pem
+*.key
+*credentials*
+*secret*
+
 # Python
 __pycache__/
 *.pyc
@@ -27,3 +33,4 @@ frontend/dist/
 /FEATURES.md
 /PLAN.md
 /MY_PLAN.md
+/GlobeTrotter.pdf

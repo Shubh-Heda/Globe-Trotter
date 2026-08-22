@@ -64,7 +64,7 @@ def translate_integrity_error(exc: SQLAlchemyError) -> AppError:
 
     if sqlstate == "23505" or "users_email_active_uq" in message:
         return EmailTaken("That email is already registered.")
-    if sqlstate == "23p01" or "stop_no_overlap" in message:
+    if sqlstate == "23P01" or "stop_no_overlap" in message:
         return StopOverlap("This stop overlaps another stop's dates.")
     return AppError("Could not complete the request.")
 

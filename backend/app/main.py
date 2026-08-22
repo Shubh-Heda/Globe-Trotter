@@ -9,6 +9,8 @@ from fastapi.staticfiles import StaticFiles
 
 from app.core.config import get_settings
 from app.core.errors import AppError
+from app.modules.auth.router import router as auth_router
+from app.modules.users.router import router as users_router
 
 settings = get_settings()
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -64,6 +66,8 @@ def create_app() -> FastAPI:
             },
         )
 
+
+
     @app.exception_handler(Exception)
     async def unhandled_error_handler(request: Request, exc: Exception) -> JSONResponse:
         return JSONResponse(
@@ -100,6 +104,8 @@ def create_app() -> FastAPI:
     app.include_router(admin_router)
     app.include_router(sharing_router)
     app.include_router(ws_router)
+    app.include_router(auth_router, prefix="/api/v1")
+    app.include_router(users_router, prefix="/api/v1")
 
     return app
 
