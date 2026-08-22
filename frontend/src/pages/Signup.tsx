@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSessionStore } from '../stores/session';
+import { API_BASE_URL } from '../api/client';
 
 function PasswordCheck({ met, label }: { met: boolean; label: string }) {
   return (
@@ -76,7 +77,7 @@ function Signup() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/v1/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName: trimmedName, email: trimmedEmail, password }),

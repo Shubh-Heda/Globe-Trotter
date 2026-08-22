@@ -1,5 +1,9 @@
 import { useSessionStore } from '../stores/session';
 
+// Empty in dev — Vite's proxy forwards /api to localhost:8000. In prod,
+// set VITE_API_BASE_URL to the deployed backend origin (e.g. Render).
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+
 export interface ApiErrorDetail {
   field: string;
   issue: string;
@@ -31,7 +35,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const response = await fetch(`/api/v1${path}`, { ...init, headers });
+  const response = await fetch(`${API_BASE_URL}/api/v1${path}`, { ...init, headers });
 
   if (response.status === 204) return undefined as T;
 
