@@ -1,0 +1,7 @@
+[
+  {"name": "India", "iso2": "IN", "region": "South Asia", "currency_code": "INR"},
+  {"name": "Thailand", "iso2": "TH", "region": "Southeast Asia", "currency_code": "THB"},
+  {"name": "Japan", "iso2": "JP", "region": "East Asia", "currency_code": "JPY"},
+  {"name": "Italy", "iso2": "IT", "region": "Europe", "currency_code": "EUR"},
+  {"name": "United States", "iso2": "US", "region": "North America", "currency_code": "USD"}
+]

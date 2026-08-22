@@ -1,0 +1,16 @@
+[
+  {"country_iso2": "IN", "name": "Mumbai", "cost_index": 35, "popularity_score": 90},
+  {"country_iso2": "IN", "name": "Kochi", "cost_index": 25, "popularity_score": 75},
+  {"country_iso2": "IN", "name": "Jaipur", "cost_index": 20, "popularity_score": 85},
+  {"country_iso2": "IN", "name": "Goa", "cost_index": 30, "popularity_score": 95},
+  {"country_iso2": "IN", "name": "Varanasi", "cost_index": 15, "popularity_score": 70},
+  {"country_iso2": "TH", "name": "Bangkok", "cost_index": 30, "popularity_score": 92},
+  {"country_iso2": "TH", "name": "Chiang Mai", "cost_index": 20, "popularity_score": 80},
+  {"country_iso2": "TH", "name": "Phuket", "cost_index": 40, "popularity_score": 88},
+  {"country_iso2": "JP", "name": "Tokyo", "cost_index": 70, "popularity_score": 98},
+  {"country_iso2": "JP", "name": "Kyoto", "cost_index": 60, "popularity_score": 93},
+  {"country_iso2": "IT", "name": "Rome", "cost_index": 55, "popularity_score": 96},
+  {"country_iso2": "IT", "name": "Florence", "cost_index": 50, "popularity_score": 87},
+  {"country_iso2": "US", "name": "New York", "cost_index": 80, "popularity_score": 97},
+  {"country_iso2": "US", "name": "San Francisco", "cost_index": 85, "popularity_score": 82}
+]

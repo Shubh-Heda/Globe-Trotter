@@ -1,0 +1,10 @@
+[
+  {"name": "Sightseeing", "slug": "sightseeing"},
+  {"name": "Food & Drink", "slug": "food-drink"},
+  {"name": "Adventure", "slug": "adventure"},
+  {"name": "Culture & History", "slug": "culture-history"},
+  {"name": "Nature & Wildlife", "slug": "nature-wildlife"},
+  {"name": "Shopping", "slug": "shopping"},
+  {"name": "Nightlife", "slug": "nightlife"},
+  {"name": "Wellness & Spa", "slug": "wellness-spa"}
+]
