@@ -78,6 +78,29 @@ def create_app() -> FastAPI:
             },
         )
 
+    # ── Mount module routers ────────────────────────────────────────
+    from app.modules.catalog.router import router as catalog_router
+    from app.modules.trips.router import router as trips_router
+    from app.modules.stops.router import router as stops_router
+    from app.modules.activities.router import router as activities_router
+    from app.modules.expenses.router import router as expenses_router
+    from app.modules.budget.router import router as budget_router
+    from app.modules.dashboard.router import router as dashboard_router
+    from app.modules.admin.router import router as admin_router
+    from app.modules.sharing.router import router as sharing_router
+    from app.realtime.manager import router as ws_router
+
+    app.include_router(catalog_router)
+    app.include_router(trips_router)
+    app.include_router(stops_router)
+    app.include_router(activities_router)
+    app.include_router(expenses_router)
+    app.include_router(budget_router)
+    app.include_router(dashboard_router)
+    app.include_router(admin_router)
+    app.include_router(sharing_router)
+    app.include_router(ws_router)
+
     return app
 
 
