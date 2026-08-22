@@ -4,12 +4,21 @@ from datetime import date, datetime, time
 from sqlalchemy import (
     CheckConstraint,
     Computed,
+    Enum,
     ForeignKey,
     Index,
     UniqueConstraint,
     text,
 )
 from sqlalchemy.dialects.postgresql import CITEXT, UUID
+
+# Map to existing Postgres enums — these must match the CREATE TYPE names exactly
+UserRole = Enum("USER", "ADMIN", name="user_role", create_type=False)
+TripVisibility = Enum("PRIVATE", "PUBLIC", name="trip_visibility", create_type=False)
+ExpenseCategory = Enum(
+    "TRANSPORT", "STAY", "ACTIVITY", "MEALS", "OTHER",
+    name="expense_category", create_type=False,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
@@ -74,7 +83,7 @@ class User(Base):
         ForeignKey("cities.id", ondelete="SET NULL")
     )
     avatar_path: Mapped[str | None] = mapped_column()
-    role: Mapped[str] = mapped_column(server_default="USER")
+    role: Mapped[str] = mapped_column(UserRole, server_default="USER")
     preferred_language: Mapped[str] = mapped_column(server_default="en")
     created_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
     updated_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
@@ -95,7 +104,7 @@ class Trip(Base):
     start_date: Mapped[date] = mapped_column()
     end_date: Mapped[date] = mapped_column()
     cover_image_path: Mapped[str | None] = mapped_column()
-    visibility: Mapped[str] = mapped_column(server_default="PRIVATE")
+    visibility: Mapped[str] = mapped_column(TripVisibility, server_default="PRIVATE")
     share_slug: Mapped[str | None] = mapped_column(unique=True)
     currency_code: Mapped[str] = mapped_column(server_default="INR")
     budget_cap_cents: Mapped[int | None] = mapped_column()
@@ -165,7 +174,7 @@ class TripExpense(Base):
     trip_stop_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("trip_stops.id", ondelete="CASCADE")
     )
-    category: Mapped[str] = mapped_column()
+    category: Mapped[str] = mapped_column(ExpenseCategory)
     label: Mapped[str] = mapped_column()
     amount_cents: Mapped[int] = mapped_column()
     incurred_on: Mapped[date | None] = mapped_column()
