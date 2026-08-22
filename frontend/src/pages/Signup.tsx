@@ -30,6 +30,12 @@ function Signup() {
   const hasUpper = /[A-Z]/.test(password);
   const hasDigit = /\d/.test(password);
 
+  const handleGoogleSignup = () => {
+    setStatusMessage(
+      'Google sign-in needs an OAuth callback on the API. Connect this button to the server-side Google OAuth flow once that route lands.',
+    );
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setStatusMessage('');
@@ -239,6 +245,23 @@ function Signup() {
               className="min-h-[2.7rem] rounded-full bg-cta font-heading text-[0.9rem] font-semibold text-white shadow-[0_10px_22px_rgba(178,114,28,0.28)] disabled:opacity-60"
             >
               {isLoading ? 'Creating account…' : 'Sign up'}
+            </button>
+
+            <p className="my-1 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-[0.72rem] uppercase tracking-widest text-muted">
+              <span className="h-px bg-rail" />
+              or continue with
+              <span className="h-px bg-rail" />
+            </p>
+
+            <button
+              type="button"
+              onClick={handleGoogleSignup}
+              className="flex min-h-[2.7rem] items-center justify-center gap-2.5 rounded-full border border-rail bg-paper font-heading text-[0.86rem] font-semibold text-ink"
+            >
+              <span className="grid h-[1.1rem] w-[1.1rem] place-items-center text-[1.1rem] font-extrabold text-[#4285f4]" aria-hidden="true">
+                G
+              </span>
+              Continue with Google
             </button>
 
             {statusMessage && (
