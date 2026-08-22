@@ -24,11 +24,6 @@ export default {
         accent: '#b2721c',
         'accent-light': '#dd9634',
         stamp: '#b33a2b',
-        // Back-compat aliases for pages not yet re-skinned to the TripCraft
-        // palette (Login/Signup) — remove once those get their pass.
-        transit: '#13463a',
-        'transit-dark': '#0d2f27',
-        ochre: '#dd9634',
       },
       fontFamily: {
         display: ['Fraunces', 'Georgia', 'serif'],

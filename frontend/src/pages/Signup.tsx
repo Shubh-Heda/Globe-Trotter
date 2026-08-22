@@ -2,26 +2,34 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSessionStore } from '../stores/session';
 
+function PasswordCheck({ met, label }: { met: boolean; label: string }) {
+  return (
+    <li className={met ? 'text-brand' : 'text-muted'}>
+      {met ? '✓' : '○'} {label}
+    </li>
+  );
+}
+
 function Signup() {
   const navigate = useNavigate();
   const setSession = useSessionStore((state) => state.setSession);
 
-  // States
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  
-  // Field errors
+
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  
-  // Status alert
+
   const [statusMessage, setStatusMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Validation & Submit Handler
+  const has8Chars = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasDigit = /\d/.test(password);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setStatusMessage('');
@@ -44,15 +52,15 @@ function Signup() {
       setEmailError('Enter a valid email address.');
       hasError = true;
     }
-    // Mirror the API's password rules (app/modules/auth/schemas.py) so the
+    // Mirrors the API's password rules (app/modules/auth/schemas.py) so the
     // user is told what's wrong here, instead of getting a 400 after submit.
-    if (password.length < 8) {
+    if (!has8Chars) {
       setPasswordError('Use at least 8 characters.');
       hasError = true;
-    } else if (!/[A-Z]/.test(password)) {
+    } else if (!hasUpper) {
       setPasswordError('Include at least one uppercase letter.');
       hasError = true;
-    } else if (!/\d/.test(password)) {
+    } else if (!hasDigit) {
       setPasswordError('Include at least one number.');
       hasError = true;
     }
@@ -65,11 +73,7 @@ function Signup() {
       const response = await fetch('/api/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName: trimmedName,
-          email: trimmedEmail,
-          password
-        }),
+        body: JSON.stringify({ fullName: trimmedName, email: trimmedEmail, password }),
       });
 
       const body = await response.json().catch(() => ({}));
@@ -91,7 +95,7 @@ function Signup() {
         setSession(body.token, body.user);
         navigate('/');
       } else {
-        throw new Error("Invalid response from server.");
+        throw new Error('Invalid response from server.');
       }
     } catch (error: any) {
       setStatusMessage(error.message || "We couldn't create your account. Please try again.");
@@ -100,70 +104,78 @@ function Signup() {
     }
   };
 
-  const handleGoogleSignup = () => {
-    setStatusMessage('Google sign-in needs an OAuth callback on the API. Connect this button to the approved server-side Google OAuth flow before release.');
-  };
-
   return (
-    <main className="min-h-screen grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] bg-wash text-ink">
-      
-      {/* Left Intro Banner */}
-      <section className="relative overflow-hidden p-8 lg:p-24 text-paper bg-[#133b46] flex flex-col justify-between min-h-[320px] lg:min-h-screen" aria-labelledby="site-title">
-        {/* Circle Overlays */}
-        <div className="absolute w-[720px] h-[720px] border border-white/5 rounded-full right-[-295px] bottom-[-430px] pointer-events-none" />
-        <div className="absolute w-[460px] h-[460px] border border-white/5 rounded-full left-[-250px] top-[-165px] pointer-events-none" />
-        
-        <Link className="relative z-10 flex items-center gap-3 text-inherit font-extrabold tracking-tight text-lg no-underline" to="/">
-          <span className="w-8 h-8 border-[1.5px] border-current rounded-full grid place-items-center font-bold text-[1.1rem]">GT</span>
-          GlobeTrotter
+    <main className="grid min-h-screen grid-cols-1 bg-wash text-ink lg:grid-cols-[1.1fr_1fr]">
+      <div className="relative flex flex-col justify-between overflow-hidden bg-brand-gradient p-8 lg:p-12">
+        <Link to="/" className="relative z-10 inline-flex items-center gap-2.5">
+          <span className="grid h-[2.15rem] w-[2.15rem] place-items-center rounded-full bg-white/15 text-white">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <circle cx="12" cy="12" r="9" />
+              <path d="m8.2 15.6 2.1-5.3 5.3-2.1-2.1 5.3z" />
+            </svg>
+          </span>
+          <span className="font-display text-[1.32rem] font-semibold text-white">GlobeTrotter</span>
         </Link>
-        
-        <div className="relative z-10 my-8 lg:my-0">
-          <p className="m-0 mb-4 text-[#b8d4d8] text-xs font-extrabold uppercase tracking-[0.15em]">Multi-city trip planner</p>
-          <h1 id="site-title" className="max-w-[580px] m-0 font-serif text-4xl lg:text-7xl font-normal leading-[0.98] tracking-tighter">
+
+        <div className="relative z-10 max-w-[26rem] py-12 lg:py-0">
+          <p className="mb-3 font-heading text-[0.78rem] font-bold uppercase tracking-[0.18em] text-[#cfe6dc]">
+            Boarding pass
+          </p>
+          <h1 className="mb-4 font-display text-[2.2rem] font-semibold leading-[1.15] text-white">
             Start with the places that matter.
           </h1>
-          <p className="max-w-[450px] mt-6 mb-0 text-[#d3e0df] text-base lg:text-lg leading-relaxed">
+          <p className="m-0 leading-[1.7] text-[#dfeae4]">
             Create an account to organise cities, activities and budgets into one clear travel plan.
           </p>
         </div>
-        
-        <div className="relative z-10 hidden lg:flex items-center gap-3 text-[#bfd7d7] text-xs">
-          <span className="block w-14 h-[1px] bg-ochre" /> Plan / organise / share
-        </div>
-      </section>
 
-      {/* Right Auth Form */}
-      <section className="min-h-full grid place-items-center p-8 bg-paper" aria-labelledby="signup-title">
-        <div className="w-full max-w-[400px]">
-          <header className="mb-6">
-            <h2 id="signup-title" className="m-0 mb-2 font-serif text-3xl lg:text-4xl font-normal tracking-tight">Create your account</h2>
-            <p className="m-0 text-muted leading-relaxed text-sm">Save your plans and return to them whenever you need.</p>
-          </header>
-          
-          <form id="signup-form" onSubmit={handleSubmit} noValidate>
-            
-            {/* Full Name Field */}
-            <div className="grid gap-2 mb-3">
-              <label htmlFor="fullName" className="text-sm font-bold">Full name</label>
+        <p className="relative z-10 m-0 text-[0.8rem] text-[#8fa79e]">
+          Multi-city trip planning, without six scattered tabs.
+        </p>
+      </div>
+
+      <section className="flex items-center justify-center p-8" aria-labelledby="signup-title">
+        <div className="w-full max-w-[23rem]">
+          <div className="mb-6 flex rounded-full border border-rail bg-rail-soft p-1">
+            <Link
+              to="/login"
+              className="flex-1 rounded-full py-2.5 text-center font-heading text-[0.85rem] font-semibold text-ink no-underline"
+            >
+              Log in
+            </Link>
+            <span className="flex-1 rounded-full bg-brand py-2.5 text-center font-heading text-[0.85rem] font-semibold text-white">
+              Sign up
+            </span>
+          </div>
+
+          <h2 id="signup-title" className="sr-only">
+            Create your account
+          </h2>
+
+          <form id="signup-form" onSubmit={handleSubmit} noValidate className="grid gap-4">
+            <label htmlFor="fullName" className="grid gap-1.5 font-heading text-[0.82rem] font-semibold text-ink">
+              Full name
               <input
                 id="fullName"
                 name="fullName"
                 type="text"
                 autoComplete="name"
-                placeholder="Your name"
+                placeholder="Asha Rao"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 aria-describedby="fullName-error"
                 aria-invalid={!!nameError}
-                className="w-full min-h-[3.15rem] px-4 py-3 border border-[#b8c1bb] rounded-md text-ink bg-white outline-none focus:border-transit focus:ring-2 focus:ring-transit/10 transition"
+                className="min-h-[2.6rem] rounded-lg border border-rail px-[0.9rem] text-[0.92rem] font-normal outline-none focus:border-brand-light"
               />
-              <span className="min-h-[1.05rem] text-stamp text-xs" id="fullName-error">{nameError}</span>
-            </div>
+              {nameError && (
+                <span className="text-[0.78rem] text-stamp" id="fullName-error">
+                  {nameError}
+                </span>
+              )}
+            </label>
 
-            {/* Email Field */}
-            <div className="grid gap-2 mb-3">
-              <label htmlFor="email" className="text-sm font-bold">Email address</label>
+            <label htmlFor="email" className="grid gap-1.5 font-heading text-[0.82rem] font-semibold text-ink">
+              Email
               <input
                 id="email"
                 name="email"
@@ -174,84 +186,76 @@ function Signup() {
                 onChange={(e) => setEmail(e.target.value)}
                 aria-describedby="email-error"
                 aria-invalid={!!emailError}
-                className="w-full min-h-[3.15rem] px-4 py-3 border border-[#b8c1bb] rounded-md text-ink bg-white outline-none focus:border-transit focus:ring-2 focus:ring-transit/10 transition"
+                className="min-h-[2.6rem] rounded-lg border border-rail px-[0.9rem] text-[0.92rem] font-normal outline-none focus:border-brand-light"
               />
-              <span className="min-h-[1.05rem] text-stamp text-xs" id="email-error">{emailError}</span>
-            </div>
+              {emailError && (
+                <span className="text-[0.78rem] text-stamp" id="email-error">
+                  {emailError}
+                </span>
+              )}
+            </label>
 
-            {/* Password Field */}
-            <div className="grid gap-2 mb-6">
-              <label htmlFor="password" className="text-sm font-bold">Password</label>
+            <label htmlFor="password" className="grid gap-1.5 font-heading text-[0.82rem] font-semibold text-ink">
+              Password
               <div className="relative">
                 <input
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
-                  placeholder="At least 8 characters"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   aria-describedby="password-error"
                   aria-invalid={!!passwordError}
-                  className="w-full min-h-[3.15rem] pl-4 pr-16 py-3 border border-[#b8c1bb] rounded-md text-ink bg-white outline-none focus:border-transit focus:ring-2 focus:ring-transit/10 transition"
+                  className="min-h-[2.6rem] w-full rounded-lg border border-rail px-[0.9rem] pr-14 text-[0.92rem] font-normal outline-none focus:border-brand-light"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-controls="password"
                   aria-pressed={showPassword}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 border-0 text-[#09536b] bg-transparent cursor-pointer text-[0.83rem] font-bold"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 border-0 bg-transparent text-[0.8rem] font-semibold text-brand"
                 >
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
-              <span className="min-h-[1.05rem] text-stamp text-xs" id="password-error">{passwordError}</span>
-            </div>
+              {passwordError && (
+                <span className="text-[0.78rem] text-stamp" id="password-error">
+                  {passwordError}
+                </span>
+              )}
+            </label>
 
-            {/* Submit Button */}
+            <ul className="-mt-2 grid list-none gap-1 p-0 text-[0.8rem]">
+              <PasswordCheck met={has8Chars} label="At least 8 characters" />
+              <PasswordCheck met={hasUpper} label="One uppercase letter" />
+              <PasswordCheck met={hasDigit} label="One digit" />
+            </ul>
+
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full min-h-[3.15rem] border border-transparent rounded-md font-bold text-white bg-transit hover:bg-transit-dark transition active:translate-y-[1px] disabled:opacity-75 disabled:pointer-events-none"
+              className="min-h-[2.7rem] rounded-full bg-cta font-heading text-[0.9rem] font-semibold text-white shadow-[0_10px_22px_rgba(178,114,28,0.28)] disabled:opacity-60"
             >
-              {isLoading ? 'Creating account...' : 'Create account'}
+              {isLoading ? 'Creating account…' : 'Sign up'}
             </button>
 
-            {/* Divider */}
-            <p className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center my-6 text-[#77817c] text-xs uppercase tracking-widest">
-              <span className="h-[1px] bg-[#d8ded9]" />
-              or continue with
-              <span className="h-[1px] bg-[#d8ded9]" />
-            </p>
-
-            {/* Google Signup */}
-            <button
-              type="button"
-              onClick={handleGoogleSignup}
-              className="w-full min-h-[3.15rem] border border-[#c9d0ca] rounded-md font-bold text-ink bg-white hover:bg-[#f6f8f5] transition flex items-center justify-center gap-3"
-            >
-              <span className="w-[1.1rem] h-[1.1rem] grid place-items-center text-[1.18rem] font-extrabold text-[#4285f4]" aria-hidden="true">G</span>
-              Continue with Google
-            </button>
-
-            {/* Status Messages */}
             {statusMessage && (
-              <p className="mt-4 p-3 rounded bg-[#f9e9e6] text-[#8c2b21] text-[0.86rem] leading-relaxed" role="alert">
+              <p className="m-0 rounded-lg bg-[#f9e9e6] p-3 text-[0.86rem] leading-relaxed text-stamp" role="alert">
                 {statusMessage}
               </p>
             )}
-
           </form>
-          
-          <p className="mt-6 text-muted text-center text-sm">
+
+          <p className="mt-6 text-center text-[0.86rem] text-muted">
             Already have an account?{' '}
-            <Link className="text-[#09536b] font-bold underline underline-offset-4" to="/login">
+            <Link className="font-semibold text-brand" to="/login">
               Sign in
             </Link>
           </p>
         </div>
       </section>
-
     </main>
   );
 }
