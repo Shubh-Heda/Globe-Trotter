@@ -120,11 +120,10 @@ export function useBudget(tripId: string | undefined) {
   });
 }
 
-export function useCalendar(tripId: string | undefined) {
+export function useCalendarAll() {
   return useQuery({
-    queryKey: ['calendar', tripId],
-    queryFn: () => api.get<CalendarDay[]>(`/trips/${tripId}/calendar`),
-    enabled: !!tripId,
+    queryKey: ['calendar'],
+    queryFn: () => api.get<CalendarDay[]>('/calendar'),
   });
 }
 

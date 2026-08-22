@@ -245,6 +245,8 @@ export interface CalendarActivity {
   notes: string | null;
   stopId: string;
   cityName: string | null;
+  tripId: string | null;
+  tripName: string | null;
 }
 
 export interface CalendarDay {

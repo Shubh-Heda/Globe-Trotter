@@ -44,6 +44,8 @@ class CalendarActivityOut(CamelModel):
     notes: str | None = None
     stop_id: uuid.UUID
     city_name: str | None = None
+    trip_id: uuid.UUID | None = None
+    trip_name: str | None = None
 
 
 class CalendarDayOut(CamelModel):

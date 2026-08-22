@@ -5,6 +5,7 @@ const navLinks = [
   { to: '/dashboard', label: 'Dashboard', end: true },
   { to: '/trips', label: 'My Trips', end: false },
   { to: '/search', label: 'Explore', end: false },
+  { to: '/calendar', label: 'Calendar', end: false },
 ];
 
 function BrandMark() {

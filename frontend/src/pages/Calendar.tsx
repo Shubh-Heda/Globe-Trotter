@@ -1,14 +1,11 @@
-import { useParams } from 'react-router-dom';
-import { useCalendar, useTrip } from '../api/trips';
+import { useCalendarAll } from '../api/trips';
 import { formatMoney } from '../api/client';
 
 function Calendar() {
-  const { tripId } = useParams<{ tripId: string }>();
-  const { data: trip } = useTrip(tripId);
-  const { data: days, isLoading, isError } = useCalendar(tripId);
+  const { data: days, isLoading, isError } = useCalendarAll();
 
   if (isLoading) return <p className="p-8 text-muted">Loading calendar…</p>;
-  if (isError || !days) return <p className="p-8 text-stamp">Couldn't load the calendar for this trip.</p>;
+  if (isError || !days) return <p className="p-8 text-stamp">Couldn't load your calendar.</p>;
 
   return (
     <>
@@ -17,10 +14,11 @@ function Calendar() {
           Home / Calendar
         </p>
         <h1 className="my-2 font-display text-[clamp(2rem,4.6vw,3rem)] font-semibold tracking-tight text-ink">
-          {trip?.name ?? 'Trip'} — day by day.
+          Every trip, day by day.
         </h1>
         <p className="m-0 leading-relaxed text-muted">
-          Pre-grouped by date. Reorder from the itinerary builder — same endpoint either way.
+          Pre-grouped by date across all of your trips. Reorder from each trip's itinerary builder —
+          same endpoint either way.
         </p>
       </section>
 
@@ -47,6 +45,11 @@ function Calendar() {
                       {item.customName ?? `Activity #${item.activityId}`}
                       {item.cityName ? ` · ${item.cityName}` : ''}
                     </span>
+                    {item.tripName && (
+                      <span className="rounded-full bg-wash px-2 py-0.5 text-[0.74rem] font-medium text-muted">
+                        {item.tripName}
+                      </span>
+                    )}
                     {item.durationMinutes && (
                       <span className="text-[0.78rem] text-muted">{item.durationMinutes} min</span>
                     )}

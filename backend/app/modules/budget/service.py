@@ -31,3 +31,7 @@ def get_budget(db: Session, trip_id: uuid.UUID, user: User) -> dict:
 def get_calendar(db: Session, trip_id: uuid.UUID, user: User) -> list[dict]:
     get_owned_trip(db, trip_id, user.id)
     return repo.get_calendar(db, trip_id)
+
+
+def get_calendar_all(db: Session, user: User) -> list[dict]:
+    return repo.get_calendar_for_user(db, user.id)

@@ -70,8 +70,8 @@ function App() {
           <Route path="/trips/new" element={<CreateTrip />} />
           <Route path="/trips/:tripId" element={<TripDetail />} />
           <Route path="/trips/:tripId/budget" element={<Budget />} />
-          <Route path="/trips/:tripId/calendar" element={<Calendar />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/calendar" element={<Calendar />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />
         </Route>

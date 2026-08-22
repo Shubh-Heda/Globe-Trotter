@@ -29,3 +29,12 @@ def get_calendar(
 ):
     days = service.get_calendar(db, trip_id, user)
     return [CalendarDayOut(**d) for d in days]
+
+
+@router.get("/calendar", response_model=list[CalendarDayOut])
+def get_calendar_all(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    days = service.get_calendar_all(db, user)
+    return [CalendarDayOut(**d) for d in days]
