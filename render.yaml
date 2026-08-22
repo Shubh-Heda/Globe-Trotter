@@ -1,0 +1,22 @@
+# render.yaml — GlobeTrotter API deploy blueprint
+# Render provisioning needs account credentials — manual step.
+# See: https://render.com/docs/infrastructure-as-code
+
+services:
+  - type: web
+    name: globetrotter-api
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false   # set manually in Render dashboard
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://globetrotter.vercel.app
