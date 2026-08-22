@@ -32,16 +32,6 @@ from app.models.tables import (
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 
-# Preset covers under backend/app/static/covers/, one per region — no upload
-# pipeline, no third-party image API (see CLAUDE.md §1, §7).
-REGION_COVER = {
-    "South Asia": "/static/covers/south-asia.svg",
-    "Southeast Asia": "/static/covers/southeast-asia.svg",
-    "East Asia": "/static/covers/east-asia.svg",
-    "Europe": "/static/covers/europe.svg",
-    "North America": "/static/covers/north-america.svg",
-}
-
 
 def _load(filename: str) -> list[dict]:
     with open(DATA_DIR / filename) as f:
@@ -79,7 +69,7 @@ def seed_cities(
     mapping = {}
     for r in rows:
         country_id = country_map[r["country_iso2"]]
-        cover = REGION_COVER.get(region_by_iso2.get(r["country_iso2"]))
+        image_url = r.get("image_url")
         existing = (
             db.query(City)
             .filter(City.country_id == country_id, City.name == r["name"])
@@ -88,7 +78,7 @@ def seed_cities(
         if existing:
             existing.cost_index = r["cost_index"]
             existing.popularity_score = r["popularity_score"]
-            existing.image_path = cover
+            existing.image_path = image_url
             mapping[r["name"]] = existing.id
         else:
             c = City(
@@ -96,7 +86,7 @@ def seed_cities(
                 name=r["name"],
                 cost_index=r["cost_index"],
                 popularity_score=r["popularity_score"],
-                image_path=cover,
+                image_path=image_url,
             )
             db.add(c)
             db.flush()

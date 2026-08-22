@@ -54,10 +54,15 @@ function Landing() {
       </header>
 
       {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden bg-brand-gradient">
-        {/* Decorative circles */}
-        <div className="pointer-events-none absolute -right-20 -top-20 h-[32rem] w-[32rem] rounded-full bg-white/[0.03]" />
-        <div className="pointer-events-none absolute -bottom-32 -left-32 h-[26rem] w-[26rem] rounded-full bg-white/[0.03]" />
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            className="h-full w-full object-cover"
+            src="https://images.unsplash.com/photo-1491738726357-683388052ea6?auto=format&fit=crop&w=2000&q=80"
+            alt="Aerial view of boats anchored off a white-sand tropical beach in turquoise water"
+          />
+          <div className="absolute inset-0 bg-brand-gradient opacity-80" />
+        </div>
 
         <div className="relative z-10 mx-auto grid max-w-[76rem] gap-8 px-5 py-[clamp(4rem,10vw,7rem)] lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-12">
           <div className="max-w-[36rem]">
