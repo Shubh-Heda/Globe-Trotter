@@ -4,9 +4,9 @@ import os
 from pathlib import Path
 
 import psycopg
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 
-load_dotenv()
+load_dotenv(find_dotenv(usecwd=True))
 
 MIGRATIONS_DIR = Path(__file__).resolve().parent.parent / "migrations"
 
