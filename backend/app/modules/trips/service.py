@@ -1,7 +1,9 @@
 import uuid
 
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.core.errors import translate_db_error
 from app.models.tables import User
 from app.modules.trips import repository as repo
 from app.modules.trips.schemas import TripCreate, TripUpdate
@@ -29,7 +31,11 @@ def get_trip_detail(db: Session, trip_id: uuid.UUID, user: User) -> dict:
 
 
 def create_trip(db: Session, user: User, data: TripCreate):
-    return repo.create_trip(db, user.id, data.model_dump(exclude_unset=False))
+    try:
+        return repo.create_trip(db, user.id, data.model_dump(exclude_unset=False))
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise translate_db_error(exc)
 
 
 def update_trip(db: Session, trip_id: uuid.UUID, user: User, data: TripUpdate):
@@ -37,7 +43,11 @@ def update_trip(db: Session, trip_id: uuid.UUID, user: User, data: TripUpdate):
     updates = data.model_dump(exclude_unset=True)
     if not updates:
         return trip
-    return repo.update_trip(db, trip, updates)
+    try:
+        return repo.update_trip(db, trip, updates)
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise translate_db_error(exc)
 
 
 def delete_trip(db: Session, trip_id: uuid.UUID, user: User) -> None:

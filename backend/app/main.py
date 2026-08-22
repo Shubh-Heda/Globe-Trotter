@@ -50,8 +50,13 @@ def create_app() -> FastAPI:
     async def validation_error_handler(
         request: Request, exc: RequestValidationError
     ) -> JSONResponse:
+        # Pydantic prefixes custom validator messages with "Value error, ".
+        # `issue` is rendered straight into the form field, so strip it.
         details = [
-            {"field": ".".join(str(part) for part in err["loc"][1:]), "issue": err["msg"]}
+            {
+                "field": ".".join(str(part) for part in err["loc"][1:]),
+                "issue": err["msg"].removeprefix("Value error, "),
+            }
             for err in exc.errors()
         ]
         return JSONResponse(

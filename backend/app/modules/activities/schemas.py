@@ -32,7 +32,7 @@ class ScheduledActivityOut(CamelModel):
     activity_id: int | None = None
     custom_name: str | None = None
     scheduled_date: date
-    start_time: str | None = None
+    start_time: time | None = None
     duration_minutes: int | None = None
     cost_cents: int
     sort_order: int

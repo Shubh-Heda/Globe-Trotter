@@ -29,12 +29,11 @@ function Signup() {
     setEmailError('');
     setPasswordError('');
 
-    const trimmedName = fullName.value ? fullName.value.trim() : fullName.trim();
-    const trimmedEmail = email.value ? email.value.trim() : email.trim();
+    const trimmedName = fullName.trim();
+    const trimmedEmail = email.trim();
 
     const validName = trimmedName.length >= 2;
     const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
-    const validPassword = password.length >= 8;
 
     let hasError = false;
     if (!validName) {
@@ -45,8 +44,16 @@ function Signup() {
       setEmailError('Enter a valid email address.');
       hasError = true;
     }
-    if (!validPassword) {
+    // Mirror the API's password rules (app/modules/auth/schemas.py) so the
+    // user is told what's wrong here, instead of getting a 400 after submit.
+    if (password.length < 8) {
       setPasswordError('Use at least 8 characters.');
+      hasError = true;
+    } else if (!/[A-Z]/.test(password)) {
+      setPasswordError('Include at least one uppercase letter.');
+      hasError = true;
+    } else if (!/\d/.test(password)) {
+      setPasswordError('Include at least one number.');
       hasError = true;
     }
 
@@ -68,6 +75,15 @@ function Signup() {
       const body = await response.json().catch(() => ({}));
 
       if (!response.ok) {
+        // The API returns per-field problems in error.details as
+        // [{field, issue}] — show each against its own input.
+        const details: { field?: string; issue?: string }[] = body?.error?.details ?? [];
+        for (const { field, issue } of details) {
+          if (!issue) continue;
+          if (field === 'fullName' || field === 'full_name') setNameError(issue);
+          else if (field === 'email') setEmailError(issue);
+          else if (field === 'password') setPasswordError(issue);
+        }
         throw new Error(body?.error?.message || "We couldn't create your account. Please try again.");
       }
 

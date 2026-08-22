@@ -51,6 +51,16 @@ function Login() {
       const body = await response.json().catch(() => ({}));
 
       if (!response.ok) {
+        // Field-level problems (malformed email, etc.) arrive in
+        // error.details as [{field, issue}]; show them on the input itself.
+        // INVALID_CREDENTIALS carries no details and stays deliberately
+        // generic, so we never reveal which half was wrong.
+        const details: { field?: string; issue?: string }[] = body?.error?.details ?? [];
+        for (const { field, issue } of details) {
+          if (!issue) continue;
+          if (field === 'email') setEmailError(issue);
+          else if (field === 'password') setPasswordError(issue);
+        }
         throw new Error(body?.error?.message || "We couldn't sign you in. Check your details and try again.");
       }
 

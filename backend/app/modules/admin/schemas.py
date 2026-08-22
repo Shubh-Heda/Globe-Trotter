@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+from datetime import date, datetime
 
 from app.core.schema_base import CamelModel
 
@@ -40,8 +40,8 @@ class AdminUserOut(CamelModel):
     email: str
     full_name: str
     role: str
-    created_at: str
-    deleted_at: str | None = None
+    created_at: datetime
+    deleted_at: datetime | None = None
 
 
 class AdminUserListOut(CamelModel):

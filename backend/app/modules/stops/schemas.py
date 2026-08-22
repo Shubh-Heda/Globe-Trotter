@@ -8,7 +8,7 @@ class StopCreate(CamelModel):
     city_id: int
     arrival_date: date
     departure_date: date
-    sort_order: int = 0
+    sort_order: int | None = None  # None appends to the end of the trip
     stay_cents: int = 0
     transport_in_cents: int = 0
     notes: str | None = None

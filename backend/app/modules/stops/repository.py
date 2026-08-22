@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import text
+from sqlalchemy import func, text
 from sqlalchemy.orm import Session
 
 from app.models.tables import City, TripStop
@@ -34,6 +34,16 @@ def list_stops(db: Session, trip_id: uuid.UUID) -> list[dict]:
 
 
 def create_stop(db: Session, trip_id: uuid.UUID, data: dict) -> TripStop:
+    # sort_order is unique per trip. When the caller doesn't pin a position,
+    # append to the end rather than defaulting to 0 and colliding with the
+    # trip's existing first stop.
+    if not data.get("sort_order"):
+        highest = (
+            db.query(func.max(TripStop.sort_order))
+            .filter(TripStop.trip_id == trip_id)
+            .scalar()
+        )
+        data = {**data, "sort_order": 0 if highest is None else highest + 1}
     stop = TripStop(trip_id=trip_id, **data)
     db.add(stop)
     db.commit()
