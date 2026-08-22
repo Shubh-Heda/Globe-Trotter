@@ -13,6 +13,7 @@ import Calendar from './pages/Calendar.tsx';
 import PublicTrip from './pages/PublicTrip.tsx';
 import Profile from './pages/Profile.tsx';
 import Admin from './pages/Admin.tsx';
+import ChatPlanner from './pages/ChatPlanner.tsx';
 import { useSessionStore } from './stores/session.ts';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -72,6 +73,8 @@ function App() {
           <Route path="/trips/:tripId/budget" element={<Budget />} />
           <Route path="/search" element={<Search />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/chat" element={<ChatPlanner />} />
+          <Route path="/chat/:sessionId" element={<ChatPlanner />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />
         </Route>

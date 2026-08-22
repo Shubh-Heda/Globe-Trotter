@@ -355,13 +355,6 @@ function TripDetail() {
 
           <button
             type="button"
-            onClick={() => navigate(`/trips/${tripId}/calendar`)}
-            className="min-h-[2.6rem] rounded-full border border-rail bg-paper font-heading text-[0.86rem] font-semibold text-ink"
-          >
-            View calendar
-          </button>
-          <button
-            type="button"
             onClick={() => navigate('/trips')}
             className="min-h-[2.6rem] rounded-full border border-rail bg-paper font-heading text-[0.86rem] font-semibold text-ink"
           >

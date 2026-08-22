@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Sparkles } from 'lucide-react';
 import { useDashboard } from '../api/trips';
 import { formatMoney } from '../api/client';
 import { STATUS_COLOR, formatDateRange } from '../lib/status';
@@ -52,17 +53,24 @@ function Dashboard() {
           <div className="mt-1 flex flex-wrap gap-3">
             <button
               type="button"
+              onClick={() => navigate('/chat')}
+              className="flex min-h-[2.5rem] items-center gap-1.5 rounded-full bg-cta px-5 font-heading text-[0.85rem] font-semibold text-white shadow-[0_10px_22px_rgba(178,114,28,0.28)]"
+            >
+              <Sparkles size={15} /> Plan with AI
+            </button>
+            <button
+              type="button"
               onClick={() => navigate('/trips')}
-              className="min-h-[2.5rem] rounded-full bg-cta px-5 font-heading text-[0.85rem] font-semibold text-white shadow-[0_10px_22px_rgba(178,114,28,0.28)]"
+              className="min-h-[2.5rem] rounded-full border border-white/40 px-5 font-heading text-[0.85rem] font-semibold text-white"
             >
               View all trips
             </button>
             <button
               type="button"
               onClick={() => navigate('/trips/new')}
-              className="min-h-[2.5rem] rounded-full bg-cta px-5 font-heading text-[0.85rem] font-semibold text-white shadow-[0_10px_22px_rgba(178,114,28,0.28)]"
+              className="min-h-[2.5rem] rounded-full border border-white/40 px-5 font-heading text-[0.85rem] font-semibold text-white"
             >
-              Plan new trip
+              Plan manually
             </button>
           </div>
         </div>

@@ -313,6 +313,77 @@ export interface SavedDestination {
   savedAt: string;
 }
 
+// ── Chat (conversational trip planner) ──────────────────────────────────
+// Mirrors backend/app/modules/chat/schemas.py.
+
+export type ChatRole = 'USER' | 'ASSISTANT' | 'TOOL';
+export type ChatActionType = 'CREATE_TRIP' | 'ADD_STOP' | 'ADD_ACTIVITY';
+export type ChatActionStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
+
+// action_payload shapes — keys match what the assistant's tool call sends,
+// which is what accept/reject round-trip back to the backend unchanged.
+export interface CreateTripActionPayload {
+  name: string;
+  startDate: string;
+  endDate: string;
+  description?: string;
+  currencyCode?: string;
+  budgetCapCents?: number;
+}
+
+export interface AddStopActionPayload {
+  cityId: number;
+  arrivalDate: string;
+  departureDate: string;
+}
+
+export interface AddActivityActionPayload {
+  stopId: string;
+  activityId?: number;
+  customName?: string;
+  scheduledDate: string;
+  costCents?: number;
+  startTime?: string;
+}
+
+export type ChatActionPayload = CreateTripActionPayload | AddStopActionPayload | AddActivityActionPayload;
+
+export interface ChatMessage {
+  id: string;
+  sessionId: string;
+  role: ChatRole;
+  content: string | null;
+  actionType: ChatActionType | null;
+  actionPayload: ChatActionPayload | null;
+  actionStatus: ChatActionStatus | null;
+  createdAt: string;
+}
+
+export interface ChatSession {
+  id: string;
+  tripId: string | null;
+  title: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChatSessionListResponse {
+  items: ChatSession[];
+}
+
+export interface ChatTurnResult {
+  session: ChatSession;
+  messages: ChatMessage[];
+}
+
+export interface ChatActionResult {
+  message: ChatMessage;
+  trip: TripOut | null;
+  stop: TripStop | null;
+  activity: ScheduledActivity | null;
+}
+
+
 // ── Admin ──────────────────────────────────────────────────────────────
 
 export interface TimeSeriesPoint {
