@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import get_settings
@@ -65,6 +65,18 @@ def create_app() -> FastAPI:
                 "requestId": getattr(request.state, "request_id", ""),
             },
         )
+
+    @app.get("/", include_in_schema=False)
+    async def dashboard_page() -> FileResponse:
+        return FileResponse(FRONTEND_DIR / "dashboard.html")
+
+    @app.get("/login", include_in_schema=False)
+    async def login_page() -> FileResponse:
+        return FileResponse(FRONTEND_DIR / "login.html")
+
+    @app.get("/signup", include_in_schema=False)
+    async def signup_page() -> FileResponse:
+        return FileResponse(FRONTEND_DIR / "signup.html")
 
     @app.exception_handler(Exception)
     async def unhandled_error_handler(request: Request, exc: Exception) -> JSONResponse:
