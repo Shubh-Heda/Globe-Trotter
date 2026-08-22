@@ -4,6 +4,7 @@ import { useSessionStore } from '../stores/session';
 const navLinks = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/trips', label: 'My Trips', end: false },
+  { to: '/search', label: 'Explore', end: false },
 ];
 
 function BrandMark() {
@@ -62,6 +63,15 @@ function Layout() {
         </nav>
 
         <div className="inline-flex items-center gap-2">
+          {user?.role === 'ADMIN' && (
+            <button
+              type="button"
+              onClick={() => navigate('/admin')}
+              className="rounded-full border border-rail px-3 font-heading text-[0.78rem] font-bold tracking-wide text-accent"
+            >
+              ADMIN
+            </button>
+          )}
           <button
             type="button"
             title="Profile"

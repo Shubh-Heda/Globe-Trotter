@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCities } from '../api/catalog';
-import { useAddActivity, useAddStop, useDeleteActivity, useDeleteStop, useTrip } from '../api/trips';
+import {
+  useAddActivity,
+  useAddStop,
+  useDeleteActivity,
+  useDeleteStop,
+  useTrip,
+  useUpdateVisibility,
+} from '../api/trips';
 import { formatMoney, ApiError } from '../api/client';
 import { computeTripStatus, formatDateRange, STATUS_COLOR } from '../lib/status';
 
@@ -14,6 +21,7 @@ function TripDetail() {
   const deleteStop = useDeleteStop(tripId!);
   const addActivity = useAddActivity(tripId!);
   const deleteActivity = useDeleteActivity(tripId!);
+  const updateVisibility = useUpdateVisibility(tripId!);
 
   const [addStopOpen, setAddStopOpen] = useState(false);
   const [stopCityId, setStopCityId] = useState('');
@@ -301,7 +309,57 @@ function TripDetail() {
             <strong className="mt-0.5 block font-display text-[1.5rem] text-ink">
               {formatMoney(totalCents, trip.currencyCode)}
             </strong>
+            <button
+              type="button"
+              onClick={() => navigate(`/trips/${tripId}/budget`)}
+              className="mt-2.5 text-[0.82rem] font-semibold text-brand"
+            >
+              Full breakdown →
+            </button>
           </div>
+
+          <div className="rounded-2xl border border-rail bg-paper p-[1.1rem]">
+            <p className="m-0 text-[0.8rem] text-muted">Visibility</p>
+            <strong className="mt-0.5 block font-heading text-[1.05rem] text-ink">{trip.visibility}</strong>
+            {trip.visibility === 'PUBLIC' && trip.shareSlug ? (
+              <>
+                <p className="mb-0 mt-2.5 break-all text-[0.78rem] text-muted">
+                  {window.location.origin}/public/{trip.shareSlug}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/public/${trip.shareSlug}`)}
+                  className="mt-2.5 min-h-[2.3rem] w-full rounded-full border border-rail bg-paper font-heading text-[0.8rem] font-semibold"
+                >
+                  View public page
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateVisibility.mutate('PRIVATE')}
+                  className="mt-2 min-h-[2.3rem] w-full rounded-full border border-rail bg-paper font-heading text-[0.8rem] font-semibold text-muted"
+                >
+                  Make private
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => updateVisibility.mutate('PUBLIC')}
+                disabled={updateVisibility.isPending}
+                className="mt-2.5 min-h-[2.3rem] w-full rounded-full bg-cta font-heading text-[0.8rem] font-semibold text-white disabled:opacity-60"
+              >
+                Publish trip
+              </button>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => navigate(`/trips/${tripId}/calendar`)}
+            className="min-h-[2.6rem] rounded-full border border-rail bg-paper font-heading text-[0.86rem] font-semibold text-ink"
+          >
+            View calendar
+          </button>
           <button
             type="button"
             onClick={() => navigate('/trips')}

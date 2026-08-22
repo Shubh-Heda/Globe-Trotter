@@ -6,6 +6,12 @@ import Dashboard from './pages/Dashboard.tsx';
 import MyTrips from './pages/MyTrips.tsx';
 import CreateTrip from './pages/CreateTrip.tsx';
 import TripDetail from './pages/TripDetail.tsx';
+import Search from './pages/Search.tsx';
+import Budget from './pages/Budget.tsx';
+import Calendar from './pages/Calendar.tsx';
+import PublicTrip from './pages/PublicTrip.tsx';
+import Profile from './pages/Profile.tsx';
+import Admin from './pages/Admin.tsx';
 import { useSessionStore } from './stores/session.ts';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -39,6 +45,9 @@ function App() {
           }
         />
 
+        {/* No auth required — the one screen a logged-out visitor can see. */}
+        <Route path="/public/:slug" element={<PublicTrip />} />
+
         <Route
           element={
             <PrivateRoute>
@@ -50,6 +59,11 @@ function App() {
           <Route path="/trips" element={<MyTrips />} />
           <Route path="/trips/new" element={<CreateTrip />} />
           <Route path="/trips/:tripId" element={<TripDetail />} />
+          <Route path="/trips/:tripId/budget" element={<Budget />} />
+          <Route path="/trips/:tripId/calendar" element={<Calendar />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<Admin />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
