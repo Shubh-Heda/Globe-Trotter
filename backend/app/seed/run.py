@@ -32,16 +32,27 @@ from app.models.tables import (
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 
+# Preset covers under backend/app/static/covers/, one per region — no upload
+# pipeline, no third-party image API (see CLAUDE.md §1, §7).
+REGION_COVER = {
+    "South Asia": "/static/covers/south-asia.svg",
+    "Southeast Asia": "/static/covers/southeast-asia.svg",
+    "East Asia": "/static/covers/east-asia.svg",
+    "Europe": "/static/covers/europe.svg",
+    "North America": "/static/covers/north-america.svg",
+}
+
 
 def _load(filename: str) -> list[dict]:
     with open(DATA_DIR / filename) as f:
         return json.load(f)
 
 
-def seed_countries(db: Session) -> dict[str, int]:
-    """Upsert countries on iso2. Returns {iso2: id}."""
+def seed_countries(db: Session) -> tuple[dict[str, int], dict[str, str]]:
+    """Upsert countries on iso2. Returns ({iso2: id}, {iso2: region})."""
     rows = _load("countries.json")
     mapping = {}
+    region_by_iso2 = {}
     for r in rows:
         existing = db.query(Country).filter(Country.iso2 == r["iso2"]).first()
         if existing:
@@ -54,17 +65,21 @@ def seed_countries(db: Session) -> dict[str, int]:
             db.add(c)
             db.flush()
             mapping[r["iso2"]] = c.id
+        region_by_iso2[r["iso2"]] = r["region"]
     db.commit()
     print(f"  Countries: {len(mapping)} upserted")
-    return mapping
+    return mapping, region_by_iso2
 
 
-def seed_cities(db: Session, country_map: dict[str, int]) -> dict[str, int]:
+def seed_cities(
+    db: Session, country_map: dict[str, int], region_by_iso2: dict[str, str]
+) -> dict[str, int]:
     """Upsert cities on (country_id, name). Returns {name: id}."""
     rows = _load("cities.json")
     mapping = {}
     for r in rows:
         country_id = country_map[r["country_iso2"]]
+        cover = REGION_COVER.get(region_by_iso2.get(r["country_iso2"]))
         existing = (
             db.query(City)
             .filter(City.country_id == country_id, City.name == r["name"])
@@ -73,6 +88,7 @@ def seed_cities(db: Session, country_map: dict[str, int]) -> dict[str, int]:
         if existing:
             existing.cost_index = r["cost_index"]
             existing.popularity_score = r["popularity_score"]
+            existing.image_path = cover
             mapping[r["name"]] = existing.id
         else:
             c = City(
@@ -80,6 +96,7 @@ def seed_cities(db: Session, country_map: dict[str, int]) -> dict[str, int]:
                 name=r["name"],
                 cost_index=r["cost_index"],
                 popularity_score=r["popularity_score"],
+                image_path=cover,
             )
             db.add(c)
             db.flush()
@@ -261,8 +278,8 @@ def main():
     db = SessionLocal()
     try:
         print("Seeding catalogue data...")
-        country_map = seed_countries(db)
-        city_map = seed_cities(db, country_map)
+        country_map, region_by_iso2 = seed_countries(db)
+        city_map = seed_cities(db, country_map, region_by_iso2)
         cat_map = seed_categories(db)
         seed_activities(db, city_map, cat_map)
 

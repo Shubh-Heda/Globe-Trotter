@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useSessionStore } from '../stores/session';
 
 const navLinks = [
-  { to: '/', label: 'Dashboard', end: true },
+  { to: '/dashboard', label: 'Dashboard', end: true },
   { to: '/trips', label: 'My Trips', end: false },
   { to: '/search', label: 'Explore', end: false },
 ];
@@ -36,12 +36,12 @@ function Layout() {
         <button
           type="button"
           className="inline-flex items-center gap-2.5"
-          onClick={() => navigate('/')}
-          aria-label="GlobeTrotter dashboard"
+          onClick={() => navigate('/dashboard')}
+          aria-label="TripCraft dashboard"
         >
           <BrandMark />
           <span className="font-display text-[1.32rem] font-semibold tracking-tight text-ink">
-            GlobeTrotter
+            TripCraft
           </span>
         </button>
 
@@ -115,7 +115,7 @@ function Layout() {
                 <path d="m8.2 15.6 2.1-5.3 5.3-2.1-2.1 5.3z" />
               </svg>
             </span>
-            <span className="font-display text-[1.05rem] font-semibold text-ink">GlobeTrotter</span>
+            <span className="font-display text-[1.05rem] font-semibold text-ink">TripCraft</span>
           </div>
           <p className="m-0 text-[0.86rem] text-muted">Plan it, track it, actually go.</p>
         </div>

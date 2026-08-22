@@ -94,7 +94,7 @@ function PublicTrip() {
           </div>
           <button
             type="button"
-            onClick={() => navigate(token ? '/' : '/login')}
+            onClick={() => navigate(token ? '/dashboard' : '/login')}
             className="min-h-[2.5rem] rounded-full border border-rail bg-paper font-heading text-[0.84rem] font-semibold text-ink"
           >
             Plan your own trip

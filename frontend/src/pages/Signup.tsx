@@ -99,7 +99,7 @@ function Signup() {
 
       if (body.token && body.user) {
         setSession(body.token, body.user);
-        navigate('/');
+        navigate('/dashboard');
       } else {
         throw new Error('Invalid response from server.');
       }
@@ -120,7 +120,7 @@ function Signup() {
               <path d="m8.2 15.6 2.1-5.3 5.3-2.1-2.1 5.3z" />
             </svg>
           </span>
-          <span className="font-display text-[1.32rem] font-semibold text-white">GlobeTrotter</span>
+          <span className="font-display text-[1.32rem] font-semibold text-white">TripCraft</span>
         </Link>
 
         <div className="relative z-10 max-w-[26rem] py-12 lg:py-0">

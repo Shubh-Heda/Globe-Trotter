@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout.tsx';
+import Landing from './pages/Landing.tsx';
 import Login from './pages/Login.tsx';
 import Signup from './pages/Signup.tsx';
 import Dashboard from './pages/Dashboard.tsx';
@@ -21,13 +22,22 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const token = useSessionStore((state) => state.token);
-  return !token ? <>{children}</> : <Navigate to="/" replace />;
+  return !token ? <>{children}</> : <Navigate to="/dashboard" replace />;
+}
+
+/** Landing page for unauthenticated visitors; logged-in users go to /dashboard. */
+function RootRoute() {
+  const token = useSessionStore((state) => state.token);
+  return token ? <Navigate to="/dashboard" replace /> : <Landing />;
 }
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public landing page at root */}
+        <Route path="/" element={<RootRoute />} />
+
         <Route
           path="/login"
           element={
@@ -55,7 +65,7 @@ function App() {
             </PrivateRoute>
           }
         >
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/trips" element={<MyTrips />} />
           <Route path="/trips/new" element={<CreateTrip />} />
           <Route path="/trips/:tripId" element={<TripDetail />} />

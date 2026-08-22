@@ -1,5 +1,6 @@
 import uuid
 from collections import defaultdict
+from datetime import timedelta
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -47,6 +48,15 @@ def get_calendar(db: Session, trip_id: uuid.UUID) -> list[dict]:
 
     stop_city_map = {s.id: city_names.get(s.city_id) for s in stops}
 
+    # Seed every day a stop actually covers, so a stop with no activities
+    # yet still shows up on the calendar. departure_date is exclusive.
+    by_date: dict[str, list] = defaultdict(list)
+    for s in stops:
+        day = s.arrival_date
+        while day < s.departure_date:
+            by_date[str(day)]
+            day += timedelta(days=1)
+
     activities = (
         db.query(StopActivity)
         .filter(StopActivity.trip_stop_id.in_(stop_ids))
@@ -54,7 +64,6 @@ def get_calendar(db: Session, trip_id: uuid.UUID) -> list[dict]:
         .all()
     )
 
-    by_date: dict[str, list] = defaultdict(list)
     for a in activities:
         by_date[str(a.scheduled_date)].append({
             "id": a.id,
