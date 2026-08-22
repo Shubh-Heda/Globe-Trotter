@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import get_settings
@@ -28,15 +28,6 @@ def create_app() -> FastAPI:
     )
 
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-
-    @app.get("/", include_in_schema=False)
-    @app.get("/login", include_in_schema=False)
-    async def login_page() -> FileResponse:
-        return FileResponse(STATIC_DIR / "login.html")
-
-    @app.get("/signup", include_in_schema=False)
-    async def signup_page() -> FileResponse:
-        return FileResponse(STATIC_DIR / "signup.html")
 
     @app.middleware("http")
     async def add_request_id(request: Request, call_next):
