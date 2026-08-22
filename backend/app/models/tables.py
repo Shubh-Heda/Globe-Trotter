@@ -7,6 +7,7 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
     Index,
+    String,
     UniqueConstraint,
     text,
 )
@@ -19,6 +20,20 @@ ExpenseCategory = Enum(
     "TRANSPORT", "STAY", "ACTIVITY", "MEALS", "OTHER",
     name="expense_category", create_type=False,
 )
+StopActivityStatus = Enum(
+    "DRAFT", "CONFIRMED", name="stop_activity_status", create_type=False,
+)
+ActivitySource = Enum(
+    "MANUAL", "AI_SUGGESTED", name="activity_source", create_type=False,
+)
+ChatRole = Enum("USER", "ASSISTANT", "TOOL", name="chat_role", create_type=False)
+ChatActionType = Enum(
+    "CREATE_TRIP", "ADD_STOP", "ADD_ACTIVITY", name="chat_action_type", create_type=False,
+)
+ChatActionStatus = Enum(
+    "PENDING", "ACCEPTED", "REJECTED", name="chat_action_status", create_type=False,
+)
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
@@ -160,6 +175,8 @@ class StopActivity(Base):
     cost_cents: Mapped[int] = mapped_column(server_default="0")
     sort_order: Mapped[int] = mapped_column(server_default="0")
     notes: Mapped[str | None] = mapped_column()
+    status: Mapped[str] = mapped_column(StopActivityStatus, server_default="CONFIRMED")
+    source: Mapped[str] = mapped_column(ActivitySource, server_default="MANUAL")
 
 
 class TripExpense(Base):
@@ -190,3 +207,70 @@ class SavedDestination(Base):
         ForeignKey("cities.id", ondelete="CASCADE"), primary_key=True
     )
     saved_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
+
+
+class TripPreferences(Base):
+    __tablename__ = "trip_preferences"
+
+    trip_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("trips.id", ondelete="CASCADE"), primary_key=True
+    )
+    budget_level: Mapped[str | None] = mapped_column()
+    interest_tags: Mapped[list[str]] = mapped_column(ARRAY(String), server_default="{}")
+    pace: Mapped[str | None] = mapped_column()
+    updated_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
+
+
+class AiSuggestionLog(Base):
+    __tablename__ = "ai_suggestion_log"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    trip_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("trips.id", ondelete="CASCADE")
+    )
+    trip_stop_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("trip_stops.id", ondelete="CASCADE")
+    )
+    activity_id: Mapped[int | None] = mapped_column(
+        ForeignKey("activities.id", ondelete="SET NULL")
+    )
+    action: Mapped[str] = mapped_column()
+    steer_text: Mapped[str | None] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
+
+
+class ChatSession(Base):
+    __tablename__ = "chat_sessions"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE")
+    )
+    trip_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("trips.id", ondelete="SET NULL")
+    )
+    title: Mapped[str | None] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
+    updated_at: Mapped[datetime] = mapped_column(server_default=text("now()"))
+
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+    __table_args__ = (Index("chat_messages_session_idx", "session_id", "created_at"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("chat_sessions.id", ondelete="CASCADE")
+    )
+    role: Mapped[str] = mapped_column(ChatRole)
+    content: Mapped[str | None] = mapped_column()
+    action_type: Mapped[str | None] = mapped_column(ChatActionType)
+    action_payload: Mapped[dict | None] = mapped_column(JSONB)
+    action_status: Mapped[str | None] = mapped_column(ChatActionStatus)
+    created_at: Mapped[datetime] = mapped_column(server_default=text("now()"))

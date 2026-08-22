@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRES_HOURS: int = 12
     CORS_ORIGINS: str = "http://localhost:5173"
+    OPENROUTER_API_KEY: str = ""
+    OPENROUTER_MODEL: str = "google/gemma-4-31b-it:free"
+    OPENROUTER_DAILY_LIMIT: int = 200
 
     @property
     def sqlalchemy_database_url(self) -> str:
