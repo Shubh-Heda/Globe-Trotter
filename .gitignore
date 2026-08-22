@@ -51,3 +51,10 @@ Thumbs.db
 
 # Generated frontend API types
 frontend/src/api/types.ts
+
+# Local spec / planning docs - not part of the tracked repo
+/API.md
+/CLAUDE.md
+/DATABASE.md
+/FEATURES.md
+/PLAN.md
