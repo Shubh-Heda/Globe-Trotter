@@ -7,20 +7,38 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#14181f',
-        paper: '#fffdf8',
-        wash: '#f1f4f1',
-        rail: '#d9dfda',
-        transit: '#0e6e8c',
-        'transit-dark': '#09536b',
+        // TripCraft palette (convert_frontend/TripCraft Prototype.dc.html) — this
+        // is the authoritative design source, ported 1:1 rather than reusing the
+        // earlier placeholder tokens.
+        ink: '#101a20',
+        paper: '#ffffff',
+        wash: '#f4f6f1',
+        'wash-deep': '#eaf0e8',
+        'wash-soft': '#f6f9f5',
+        rail: '#d9e1d8',
+        'rail-soft': '#eef2ec',
+        muted: '#5c6f69',
+        placeholder: '#8a9a94',
+        brand: '#13463a',
+        'brand-light': '#1f6f5c',
+        accent: '#b2721c',
+        'accent-light': '#dd9634',
         stamp: '#b33a2b',
-        ochre: '#d79b2f',
-        muted: '#5f6965',
+        // Back-compat aliases for pages not yet re-skinned to the TripCraft
+        // palette (Login/Signup) — remove once those get their pass.
+        transit: '#13463a',
+        'transit-dark': '#0d2f27',
+        ochre: '#dd9634',
       },
       fontFamily: {
-        serif: ['Georgia', 'Times New Roman', 'serif'],
+        display: ['Fraunces', 'Georgia', 'serif'],
+        heading: ['"Space Grotesk"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-      }
+      },
+      backgroundImage: {
+        cta: 'linear-gradient(135deg, #dd9634, #b2721c)',
+        'brand-gradient': 'linear-gradient(160deg, #13463a, #101a20)',
+      },
     },
   },
   plugins: [],
