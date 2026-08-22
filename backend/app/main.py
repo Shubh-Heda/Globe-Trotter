@@ -9,6 +9,8 @@ from fastapi.staticfiles import StaticFiles
 
 from app.core.config import get_settings
 from app.core.errors import AppError
+from app.modules.auth.router import router as auth_router
+from app.modules.users.router import router as users_router
 
 settings = get_settings()
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -86,6 +88,9 @@ def create_app() -> FastAPI:
                 "requestId": getattr(request.state, "request_id", ""),
             },
         )
+
+    app.include_router(auth_router, prefix="/api/v1")
+    app.include_router(users_router, prefix="/api/v1")
 
     return app
 
