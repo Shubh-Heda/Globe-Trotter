@@ -19,3 +19,10 @@ frontend/dist/
 .DS_Store
 .vscode/
 .idea/
+
+# Local spec / planning docs - not part of the tracked repo
+/API.md
+/CLAUDE.md
+/DATABASE.md
+/FEATURES.md
+/PLAN.md
